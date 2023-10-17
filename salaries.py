@@ -25,13 +25,13 @@ if __name__ == '__main__':
         response = requests.get(url, params=params)
 
         if response.ok:
-            data = response.json()
-            vacancies_found = data['found']
-            vacancies = data['items']
+            content = response.json()
+            vacancies_found = content['found']
+            vacancies = content['items']
             salaries = []
             for vacancy in vacancies:
                 salary = vacancy.get('salary')
-                if salary and salary.get('from') is not None and salary.get('to') is not None:
+                if salary and salary.get('from') and salary.get('to'):
                     salaries.append((salary['from'] + salary['to']) / 2)
             average_salary = int(mean(salaries)) if salaries else 0
 
@@ -50,10 +50,10 @@ if __name__ == '__main__':
             'town': 4,
             'keyword': "программист {}".format(language)
         }
-        response_sj = requests.get(url, headers=headers, params=params)
+        response_super_job = requests.get(url, headers=headers, params=params)
 
-        if response_sj.ok:
-            data_sj = response_sj.json()
+        if response_super_job.ok:
+            data_sj = response_super_job.json()
             vacancies_found_sj = len(data_sj['objects'])
             salaries_sj = []
             for vacancy in data_sj['objects']:
@@ -67,17 +67,17 @@ if __name__ == '__main__':
                 "average_salary": average_salary_sj
             }
         else:
-            print("Ошибка при выполнении запроса:", response_sj.status_code)
+            print("Ошибка при выполнении запроса:", response_super_job.status_code)
 
     # Output
-    table_data_hh = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
+    table_content_hh = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
     for lang, data in vacancies_salary_stats_hh.items():
-        table_data_hh.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
-    table_hh = AsciiTable(table_data_hh, "+HeadHunter Moscow------")
+        table_content_hh.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
+    table_hh = AsciiTable(table_content_hh, "+HeadHunter Moscow------")
     print(table_hh.table)
 
-    table_data_sj = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
+    table_content_sj = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
     for lang, data in vacancies_salary_stats_sj.items():
-        table_data_sj.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
-    table_sj = AsciiTable(table_data_sj, "+SuperJob Moscow--------")
+        table_content_sj.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
+    table_sj = AsciiTable(table_content_sj, "+SuperJob Moscow--------")
     print(table_sj.table)
