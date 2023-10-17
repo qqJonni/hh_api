@@ -24,7 +24,7 @@ if __name__ == '__main__':
         }
         response = requests.get(url, params=params)
 
-        if response.status_code == 200:
+        if response.ok:
             data = response.json()
             vacancies_found = data['found']
             vacancies = data['items']
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         }
         response_sj = requests.get(url, headers=headers, params=params)
 
-        if response_sj.status_code == 200:
+        if response_sj.ok:
             data_sj = response_sj.json()
             vacancies_found_sj = len(data_sj['objects'])
             salaries_sj = []
