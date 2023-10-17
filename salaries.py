@@ -17,8 +17,12 @@ headers = {
 if __name__ == '__main__':
     for language in languages:
         # HeadHunter API request
-        url = "https://api.hh.ru/vacancies?text=программист {}&area=1".format(language)
-        response = requests.get(url)
+        url = "https://api.hh.ru/vacancies"
+        params = {
+            "text": "программист {}".format(language),
+            "area": "1"
+        }
+        response = requests.get(url, params=params)
 
         if response.status_code == 200:
             data = response.json()
