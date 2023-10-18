@@ -6,13 +6,13 @@ from terminaltables import SingleTable
 
 def get_hh_vacancies(programming_lang):
     """Получение списка вакансий по языку программирования"""
-    id_moscow_city = 1
+    moscow_city_id = 1
     search_days_period = 30
     page = 0
     url = 'https://api.hh.ru/vacancies/'
     params = {
         'text': programming_lang,
-        'area': id_moscow_city,
+        'area': moscow_city_id,
         'period': search_days_period,
         'page': page
     }
