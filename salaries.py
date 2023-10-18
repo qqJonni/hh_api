@@ -35,14 +35,19 @@ def get_hh_vacancies(programming_lang):
 def predict_rub_salary_hh(vacancy):
     """Получение полей зарплаты "От" и "До" """
     try:
-        vacancy_salary = vacancy['salary']
-        currency = vacancy_salary['currency'] or None
-        salary_from = vacancy_salary['from'] or None
-        salary_to = vacancy_salary['to'] or None
-        if not currency == 'RUR':
+        vacancy_salary = vacancy.get('salary')
+        if vacancy_salary:
+            currency = vacancy_salary.get('currency')
+            if currency == 'RUR':
+                salary_from = vacancy_salary.get('from')
+                salary_to = vacancy_salary.get('to')
+            else:
+                salary_from = None
+                salary_to = None
+        else:
             salary_from = None
             salary_to = None
-    except TypeError and KeyError:
+    except TypeError:
         salary_from = None
         salary_to = None
 
@@ -117,13 +122,10 @@ def get_sj_vacancies(programming_lang, sj_secret_key):
 
 def predict_rub_salary_sj(vacancy):
     """Получение полей зарплаты "От" и "До" """
-    try:
-        salary_from = vacancy['payment_from'] or None
-        salary_to = vacancy['payment_to']
-        if salary_from and salary_to == 0:
-            salary_from = None
-            salary_to = None
-    except TypeError:
+    salary_from = vacancy.get('payment_from', None)
+    salary_to = vacancy.get('payment_to', None)
+
+    if salary_from and (salary_to == 0 or salary_to is None):
         salary_from = None
         salary_to = None
 
