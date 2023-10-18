@@ -32,7 +32,7 @@ def get_hh_vacancies(programming_lang):
     return count, vacancies
 
 
-def predict_rub_salary_hh(vacancy):
+def get_rub_salary_hh(vacancy):
     """Получение полей зарплаты "От" и "До" """
     try:
         vacancy_salary = vacancy.get('salary')
@@ -71,7 +71,7 @@ def calculate_languages_statistics_hh(vacancies_hh):
     salaries = []
     for vacancies in vacancies_hh:
         for vacancy in vacancies['items']:
-            salary_from, salary_to = predict_rub_salary_hh(vacancy)
+            salary_from, salary_to = get_rub_salary_hh(vacancy)
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
                 salaries.append(int(rub_salary))
@@ -120,7 +120,7 @@ def get_sj_vacancies(programming_lang, sj_secret_key):
     return vacancies
 
 
-def predict_rub_salary_sj(vacancy):
+def get_rub_salary_sj(vacancy):
     """Получение полей зарплаты "От" и "До" """
     salary_from = vacancy.get('payment_from', None)
     salary_to = vacancy.get('payment_to', None)
@@ -139,7 +139,7 @@ def calculate_languages_statistics_sj(sj_vacancies):
     for vacancies in sj_vacancies:
         for vacancy in vacancies:
             vacancies_count_sj += 1
-            salary_from, salary_to = predict_rub_salary_hh(vacancy)
+            salary_from, salary_to = get_rub_salary_sj(vacancy)
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
                 salaries.append(int(rub_salary))
