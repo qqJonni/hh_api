@@ -75,11 +75,13 @@ def calculate_languages_statistics_hh(vacancies_hh):
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
                 salaries.append(int(rub_salary))
+
+    vacancies_processed_hh = len(salaries)
+
     try:
-        average_salary_hh = int(sum(salaries) / len(salaries))
+        average_salary_hh = int(sum(salaries) / vacancies_processed_hh)
     except ZeroDivisionError:
         average_salary_hh = 0
-    vacancies_processed_hh = len(salaries)
 
     return vacancies_processed_hh, average_salary_hh
 
@@ -141,11 +143,13 @@ def calculate_languages_statistics_sj(sj_vacancies):
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
                 salaries.append(int(rub_salary))
+
+    vacancies_processed_sj = len(salaries)
+
     try:
-        average_salary_sj = int(sum(salaries) / len(salaries))
+        average_salary_sj = int(sum(salaries) / vacancies_processed_sj)
     except ZeroDivisionError:
         average_salary_sj = 0
-    vacancies_processed_sj = len(salaries)
 
     return vacancies_processed_sj, average_salary_sj
 
