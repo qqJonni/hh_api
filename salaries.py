@@ -135,24 +135,22 @@ def get_rub_salary_sj(vacancy):
 def calculate_languages_statistics_sj(sj_vacancies):
     """Подсчет по яз. средней з/п, кол-во вакансий и кол-во обработанных вакансий"""
     salaries = []
-    vacancies_count_sj = 0
     for vacancies in sj_vacancies:
-        for vacancy in vacancies:
-            vacancies_count_sj += 1
+        for vacancy in vacancies['items']:
             salary_from, salary_to = get_rub_salary_sj(vacancy)
             rub_salary = predict_salary(salary_from, salary_to)
             if rub_salary:
                 salaries.append(int(rub_salary))
-    vacancies_processed_sj = len(salaries)
     try:
         average_salary_sj = int(sum(salaries) / len(salaries))
     except ZeroDivisionError:
         average_salary_sj = 0
+    vacancies_processed_sj = len(salaries)
 
-    return vacancies_processed_sj, average_salary_sj, vacancies_count_sj
+    return vacancies_processed_sj, average_salary_sj
 
 
-def view_table(table,title):
+def view_table(table, title):
     """ view table """
     table_instance = SingleTable(table, title)
     table_instance.justify_columns[2] = 'right'
