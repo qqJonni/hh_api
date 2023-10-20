@@ -183,10 +183,9 @@ def main():
 
         """ SuperJob """
         sj_vacancies = get_sj_vacancies(programming_lang, sj_secret_key)
-        vacancies_processed_sj, average_salary_sj, vacancies_count_sj = calculate_languages_statistics_sj(sj_vacancies)
+        vacancies_processed_sj, average_salary_sj = calculate_languages_statistics_sj(sj_vacancies)
         table_sj.append(
             [programming_lang,
-             vacancies_count_sj,
              vacancies_processed_sj,
              average_salary_sj
              ])
