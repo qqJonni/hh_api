@@ -39,21 +39,14 @@ class CustomSalaryDataError(Exception):
 
 def get_rub_salary_hh(vacancy):
     """Получение полей зарплаты "От" и "До" с использованием собственных исключений"""
-    try:
-        vacancy_salary = vacancy.get('salary')
-        if vacancy_salary:
-            currency = vacancy_salary.get('currency')
-            if currency == 'RUR':
-                salary_from = vacancy_salary.get('from')
-                salary_to = vacancy_salary.get('to')
-            else:
-                raise CustomSalaryDataError("Неподдерживаемая валюта")
-        else:
-            salary_from = None
-            salary_to = None
-    except (TypeError, CustomSalaryDataError):
-        salary_from = None
-        salary_to = None
+    vacancy_salary = vacancy.get('salary')
+    if not vacancy_salary:
+        return None, None
+    currency = vacancy_salary.get('currency')
+    if currency != 'RUR':
+        raise CustomSalaryDataError("Неподдерживаемая валюта")
+    salary_from = vacancy_salary.get('from')
+    salary_to = vacancy_salary.get('to')
 
     return salary_from, salary_to
 
