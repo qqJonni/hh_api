@@ -124,7 +124,7 @@ def get_rub_salary_sj(vacancy):
     salary_from = vacancy.get('payment_from', None)
     salary_to = vacancy.get('payment_to', None)
 
-    if salary_from and (salary_to == 0 or salary_to is None):
+    if salary_from and (not salary_to or None):
         salary_from = None
         salary_to = None
 
