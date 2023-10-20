@@ -32,8 +32,13 @@ def get_hh_vacancies(programming_lang):
     return count, vacancies
 
 
+class CustomSalaryDataError(Exception):
+    """Исключение, связанное с данными о зарплате в вакансии"""
+    pass
+
+
 def get_rub_salary_hh(vacancy):
-    """Получение полей зарплаты "От" и "До" """
+    """Получение полей зарплаты "От" и "До" с использованием собственных исключений"""
     try:
         vacancy_salary = vacancy.get('salary')
         if vacancy_salary:
@@ -42,12 +47,11 @@ def get_rub_salary_hh(vacancy):
                 salary_from = vacancy_salary.get('from')
                 salary_to = vacancy_salary.get('to')
             else:
-                salary_from = None
-                salary_to = None
+                raise CustomSalaryDataError("Неподдерживаемая валюта")
         else:
             salary_from = None
             salary_to = None
-    except TypeError:
+    except (TypeError, CustomSalaryDataError):
         salary_from = None
         salary_to = None
 
