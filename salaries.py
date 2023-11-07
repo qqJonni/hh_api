@@ -4,8 +4,6 @@ from dotenv import load_dotenv, find_dotenv
 from statistics import mean
 from terminaltables import AsciiTable
 
-load_dotenv(find_dotenv())
-
 
 def get_hh_vacancy_data(language):
     base_url = "https://api.hh.ru/vacancies"
@@ -101,4 +99,5 @@ def main():
 
 
 if __name__ == "__main__":
+    load_dotenv(find_dotenv())
     main()
