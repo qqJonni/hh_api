@@ -5,7 +5,7 @@ from statistics import mean
 from terminaltables import AsciiTable
 
 
-def get_hh_vacancy_data(language):
+def get_hh_vacancy_salaries(language):
     base_url = "https://api.hh.ru/vacancies"
     vacancies_found = 0
     salaries = []
@@ -36,7 +36,7 @@ def get_hh_vacancy_data(language):
     }
 
 
-def get_sj_vacancy_data(language, sj_secret_key):
+def get_sj_vacancy_salaries(language, sj_secret_key):
     base_url = "https://api.superjob.ru/2.0/vacancies/"
     vacancies_found_sj = 0
     salaries_sj = []
@@ -76,11 +76,11 @@ def main():
     sj_secret_key = os.environ.get('SUPERJOB_SECRET_KEY')
 
     for language in languages:
-        hh_data = get_hh_vacancy_data(language)
+        hh_data = get_hh_vacancy_salaries(language)
         if hh_data:
             vacancies_salary_stats_hh[language] = hh_data
 
-        sj_data = get_sj_vacancy_data(language, sj_secret_key)
+        sj_data = get_sj_vacancy_salaries(language, sj_secret_key)
         if sj_data:
             vacancies_salary_stats_sj[language] = sj_data
 
