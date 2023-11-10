@@ -21,23 +21,22 @@ def get_hh_vacancy_salaries(language):
             'area': AREA_MOSCOW_HH,
             'page': page
         }
-        response = requests.get(base_url, params=params)
-        if response.ok:
-            data = response.json()
-            vacancies_found = data['found']
-            vacancies = data['items']
-            for vacancy in vacancies:
-                salary = vacancy.get('salary')
-                if salary and salary.get('from') and salary.get('to'):
-                    salaries.append((salary['from'] + salary['to']) / 2)
-            page += 1
-            if not data['pages'] or page >= data['pages']:
-                break
-        elif response.status_code == 403:
-            print(f"Доступ к API HeadHunter запрещен (403) для {language}. Пожалуйста, проверьте ключ авторизации и ограничения API.")
+        try:
+            response = requests.get(base_url, params=params)
+            response.raise_for_status()  # Raises an HTTPError for bad responses
+        except requests.exceptions.HTTPError as e:
+            print(f"Ошибка при выполнении запроса (HH) для {language}: {e}")
             break
-        else:
-            print(f"Ошибка при выполнении запроса (HH) для {language}: {response.status_code}")
+
+        data = response.json()
+        vacancies_found = data['found']
+        vacancies = data['items']
+        for vacancy in vacancies:
+            salary = vacancy.get('salary')
+            if salary and salary.get('from') and salary.get('to'):
+                salaries.append((salary['from'] + salary['to']) / 2)
+        page += 1
+        if not data['pages'] or page >= data['pages']:
             break
 
     average_salary = int(mean(salaries)) if salaries else 0
@@ -64,18 +63,20 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
         headers = {
             'X-Api-App-Id': sj_secret_key
         }
-        response_sj = requests.get(base_url, headers=headers, params=params)
-        if response_sj.ok:
-            data_sj = response_sj.json()
-            vacancies_found_sj += len(data_sj['objects'])
-            for vacancy in data_sj['objects']:
-                if vacancy['payment_from'] and vacancy['payment_to']:
-                    salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
-            page += 1
-            if not data_sj['more'] or not data_sj['objects']:
-                break
-        else:
-            print(f"Ошибка при выполнении запроса (SuperJob) для {language}: {response_sj.status_code}")
+        try:
+            response_sj = requests.get(base_url, headers=headers, params=params)
+            response_sj.raise_for_status()  # Raises an HTTPError for bad responses
+        except requests.exceptions.HTTPError as e:
+            print(f"Ошибка при выполнении запроса (SuperJob) для {language}: {e}")
+            break
+
+        data_sj = response_sj.json()
+        vacancies_found_sj += len(data_sj['objects'])
+        for vacancy in data_sj['objects']:
+            if vacancy['payment_from'] and vacancy['payment_to']:
+                salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
+        page += 1
+        if not data_sj['more'] or not data_sj['objects']:
             break
 
     average_salary_sj = int(mean(salaries_sj)) if salaries_sj else 0
@@ -93,13 +94,16 @@ def main():
     sj_secret_key = os.environ.get('SUPERJOB_SECRET_KEY')
 
     for language in languages:
-        hh_data = get_hh_vacancy_salaries(language)
-        if hh_data:
-            vacancies_salary_stats_hh[language] = hh_data
+        try:
+            hh_data = get_hh_vacancy_salaries(language)
+            if hh_data:
+                vacancies_salary_stats_hh[language] = hh_data
 
-        sj_data = get_sj_vacancy_salaries(language, sj_secret_key)
-        if sj_data:
-            vacancies_salary_stats_sj[language] = sj_data
+            sj_data = get_sj_vacancy_salaries(language, sj_secret_key)
+            if sj_data:
+                vacancies_salary_stats_sj[language] = sj_data
+        except Exception as e:
+            print(f"Exception while processing language {language}: {e}")
 
     # Output
     table_data_hh = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
