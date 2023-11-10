@@ -28,15 +28,15 @@ def get_hh_vacancy_salaries(language):
             print(f"Ошибка при выполнении запроса (HH) для {language}: {e}")
             break
 
-        data = response.json()
-        vacancies_found = data['found']
-        vacancies = data['items']
+        content = response.json()
+        vacancies_found = content['found']
+        vacancies = content['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
             if salary and salary.get('from') and salary.get('to'):
                 salaries.append((salary['from'] + salary['to']) / 2)
         page += 1
-        if not data['pages'] or page >= data['pages']:
+        if not content['pages'] or page >= content['pages']:
             break
 
     average_salary = int(mean(salaries)) if salaries else 0
@@ -70,13 +70,13 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
             print(f"Ошибка при выполнении запроса (SuperJob) для {language}: {e}")
             break
 
-        data_sj = response_sj.json()
-        vacancies_found_sj += len(data_sj['objects'])
-        for vacancy in data_sj['objects']:
+        content_sj = response_sj.json()
+        vacancies_found_sj += len(content_sj['objects'])
+        for vacancy in content_sj['objects']:
             if vacancy['payment_from'] and vacancy['payment_to']:
                 salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
         page += 1
-        if not data_sj['more'] or not data_sj['objects']:
+        if not content_sj['more'] or not content_sj['objects']:
             break
 
     average_salary_sj = int(mean(salaries_sj)) if salaries_sj else 0
@@ -95,27 +95,27 @@ def main():
 
     for language in languages:
         try:
-            hh_data = get_hh_vacancy_salaries(language)
-            if hh_data:
-                vacancies_salary_stats_hh[language] = hh_data
+            hh_content = get_hh_vacancy_salaries(language)
+            if hh_content:
+                vacancies_salary_stats_hh[language] = hh_content
 
-            sj_data = get_sj_vacancy_salaries(language, sj_secret_key)
-            if sj_data:
-                vacancies_salary_stats_sj[language] = sj_data
+            sj_content = get_sj_vacancy_salaries(language, sj_secret_key)
+            if sj_content:
+                vacancies_salary_stats_sj[language] = sj_content
         except Exception as e:
             print(f"Exception while processing language {language}: {e}")
 
     # Output
-    table_data_hh = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
-    for lang, data in vacancies_salary_stats_hh.items():
-        table_data_hh.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
-    table_hh = AsciiTable(table_data_hh, "+HeadHunter Moscow------")
+    table_content_hh = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
+    for lang, content in vacancies_salary_stats_hh.items():
+        table_content_hh.append((lang, content['vacancies_found'], content['vacancies_processed'], content['average_salary']))
+    table_hh = AsciiTable(table_content_hh, "+HeadHunter Moscow------")
     print(table_hh.table)
 
-    table_data_sj = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
-    for lang, data in vacancies_salary_stats_sj.items():
-        table_data_sj.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
-    table_sj = AsciiTable(table_data_sj, "+SuperJob Moscow--------")
+    table_content_sj = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
+    for lang, content in vacancies_salary_stats_sj.items():
+        table_content_sj.append((lang, content['vacancies_found'], content['vacancies_processed'], content['average_salary']))
+    table_sj = AsciiTable(table_content_sj, "+SuperJob Moscow--------")
     print(table_sj.table)
 
 
