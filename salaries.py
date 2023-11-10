@@ -62,29 +62,32 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
             'catalogues': CATALOGUE_PROGRAMMING_SJ,
             'town': TOWN_MOSCOW_SJ,
             'keyword': f"программист {language}",
-            'page': page
+            'page': page,
+            'period': 1
         }
         headers = {
             'X-Api-App-Id': sj_secret_key
         }
         try:
             response_sj = requests.get(base_url, headers=headers, params=params)
-            response_sj.raise_for_status()  # Raises an HTTPError for bad responses
+            response_sj.raise_for_status()
         except requests.exceptions.HTTPError as e:
             print(f"Ошибка при выполнении запроса (SuperJob) для {language}: {e}")
             break
 
         content_sj = response_sj.json()
-        vacancies_found_sj += len(content_sj['objects'])
-        for vacancy in content_sj['objects']:
-            if vacancy['payment_from'] and vacancy['payment_to']:
+        vacancies_found_sj = content_sj.get('total', 0)
+
+        for vacancy in content_sj.get('objects', []):
+            if vacancy.get('payment_from') and vacancy.get('payment_to'):
                 salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
-            if vacancy['payment_from']:
-                salaries_sj.append((vacancy['payment_from']*1.2))
-            if vacancy['payment_to']:
-                salaries_sj.append((vacancy['payment_from']*0.8))
+            elif vacancy.get('payment_from'):
+                salaries_sj.append(vacancy['payment_from'] * 1.2)
+            elif vacancy.get('payment_to'):
+                salaries_sj.append(vacancy['payment_to'] * 0.8)
+
         page += 1
-        if not content_sj['more'] or not content_sj['objects']:
+        if not content_sj.get('more') or not content_sj.get('objects'):
             break
 
     average_salary_sj = int(mean(salaries_sj)) if salaries_sj else 0
