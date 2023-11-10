@@ -35,6 +35,10 @@ def get_hh_vacancy_salaries(language):
             salary = vacancy.get('salary')
             if salary and salary.get('from') and salary.get('to'):
                 salaries.append((salary['from'] + salary['to']) / 2)
+            if salary and salary.get('from'):
+                salaries.append((salary['from']*1.2))
+            if salary and salary.get('to'):
+                salaries.append((salary['to']*0.8))
         page += 1
         if not content['pages'] or page >= content['pages']:
             break
@@ -75,6 +79,10 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
         for vacancy in content_sj['objects']:
             if vacancy['payment_from'] and vacancy['payment_to']:
                 salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
+            if vacancy['payment_from']:
+                salaries_sj.append((vacancy['payment_from']*1.2))
+            if vacancy['payment_to']:
+                salaries_sj.append((vacancy['payment_from']*0.8))
         page += 1
         if not content_sj['more'] or not content_sj['objects']:
             break
