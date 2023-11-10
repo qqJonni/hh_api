@@ -4,13 +4,13 @@ from dotenv import load_dotenv, find_dotenv
 from statistics import mean
 from terminaltables import AsciiTable
 
-
 def get_hh_vacancy_salaries(language):
     base_url = "https://api.hh.ru/vacancies"
     vacancies_found = 0
     salaries = []
 
-    for page in range(0, 10):  # Adjust the number of pages to fetch as needed
+    page = 0
+    while True:
         params = {
             'text': f"программист {language}",
             'area': 1,
@@ -25,8 +25,15 @@ def get_hh_vacancy_salaries(language):
                 salary = vacancy.get('salary')
                 if salary and salary.get('from') and salary.get('to'):
                     salaries.append((salary['from'] + salary['to']) / 2)
+            page += 1
+            if not data['pages'] or page >= data['pages']:
+                break
+        elif response.status_code == 403:
+            print(f"Доступ к API HeadHunter запрещен (403) для {language}. Пожалуйста, проверьте ключ авторизации и ограничения API.")
+            break
         else:
             print(f"Ошибка при выполнении запроса (HH) для {language}: {response.status_code}")
+            break
 
     average_salary = int(mean(salaries)) if salaries else 0
     return {
@@ -35,13 +42,13 @@ def get_hh_vacancy_salaries(language):
         "average_salary": average_salary
     }
 
-
 def get_sj_vacancy_salaries(language, sj_secret_key):
     base_url = "https://api.superjob.ru/2.0/vacancies/"
     vacancies_found_sj = 0
     salaries_sj = []
 
-    for page in range(0, 10):  # Adjust the number of pages to fetch as needed
+    page = 0
+    while True:
         params = {
             'catalogues': 48,
             'town': 4,
@@ -58,8 +65,12 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
             for vacancy in data_sj['objects']:
                 if vacancy['payment_from'] and vacancy['payment_to']:
                     salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
+            page += 1
+            if not data_sj['more'] or not data_sj['objects']:
+                break
         else:
             print(f"Ошибка при выполнении запроса (SuperJob) для {language}: {response_sj.status_code}")
+            break
 
     average_salary_sj = int(mean(salaries_sj)) if salaries_sj else 0
     return {
@@ -67,7 +78,6 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
         "vacancies_processed": len(salaries_sj),
         "average_salary": average_salary_sj
     }
-
 
 def main():
     languages = ["Python", "Java", "Javascript", "Go", "PHP", "C++", "TypeScript", "C#", "Shell"]
@@ -96,7 +106,6 @@ def main():
         table_data_sj.append((lang, data['vacancies_found'], data['vacancies_processed'], data['average_salary']))
     table_sj = AsciiTable(table_data_sj, "+SuperJob Moscow--------")
     print(table_sj.table)
-
 
 if __name__ == "__main__":
     load_dotenv(find_dotenv())
