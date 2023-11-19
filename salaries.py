@@ -2,6 +2,8 @@ import requests
 import os
 from dotenv import load_dotenv, find_dotenv
 from statistics import mean
+
+from requests import HTTPError
 from terminaltables import AsciiTable
 
 AREA_MOSCOW_HH = 1
@@ -113,7 +115,7 @@ def start():
             sj_content = get_sj_vacancy_salaries(language, sj_secret_key)
             if sj_content:
                 vacancies_salary_stats_sj[language] = sj_content
-        except Exception as e:
+        except HTTPError as e:
             print(f"Exception while processing language {language}: {e}")
 
     # Output
