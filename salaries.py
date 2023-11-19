@@ -11,6 +11,17 @@ CATALOGUE_PROGRAMMING_SJ = 48
 TOWN_MOSCOW_SJ = 4
 
 
+def generate_salary_table(stats, title):
+    table_content = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
+
+    for lang, content in stats.items():
+        table_content.append(
+            (lang, content['vacancies_found'], content['vacancies_processed'], content['average_salary']))
+
+    table = AsciiTable(table_content, title)
+    return table.table
+
+
 def extract_salaries(salary_info, from_key, to_key):
     extracted_salaries = []
 
@@ -122,17 +133,11 @@ def start():
             print(f"Exception while processing language {language}: {e}")
 
     # Output
-    table_content_hh = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
-    for lang, content in vacancies_salary_stats_hh.items():
-        table_content_hh.append((lang, content['vacancies_found'], content['vacancies_processed'], content['average_salary']))
-    table_hh = AsciiTable(table_content_hh, "+HeadHunter Moscow------")
-    print(table_hh.table)
+    table_hh = generate_salary_table(vacancies_salary_stats_hh, "+HeadHunter Moscow------")
+    print(table_hh)
 
-    table_content_sj = [('Язык программирования', 'Найдено вакансий', 'Обработано вакансий', 'Средняя зарплата')]
-    for lang, content in vacancies_salary_stats_sj.items():
-        table_content_sj.append((lang, content['vacancies_found'], content['vacancies_processed'], content['average_salary']))
-    table_sj = AsciiTable(table_content_sj, "+SuperJob Moscow--------")
-    print(table_sj.table)
+    table_sj = generate_salary_table(vacancies_salary_stats_sj, "+SuperJob Moscow--------")
+    print(table_sj)
 
 
 if __name__ == "__main__":
