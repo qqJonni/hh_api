@@ -1,24 +1,40 @@
 import requests
+import os
+from dotenv import load_dotenv, find_dotenv
+from statistics import mean
 
-AREA_MOSCOW_HH = 1
-CATALOGUE_PROGRAMMING_SJ = 48
-TOWN_MOSCOW_SJ = 4
-page = 0
+load_dotenv(find_dotenv())
 
-base_url = "https://api.superjob.ru/2.0/vacancies/"
+languages = ["Python", "Java", "Javascript", "Go", "PHP", "C++", "TypeScript", "C#", "Shell"]
+vacancies_salary_stats = {}
+headers = {
+    'X-Api-App-Id': os.environ.get('SUPERJOB_SECRET_KEY')
+}
 
-while True:
+for language in languages:
+    url = "https://api.superjob.ru/2.0/vacancies/"
     params = {
-            'catalogues': CATALOGUE_PROGRAMMING_SJ,
-            'town': TOWN_MOSCOW_SJ,
-            'keyword': f"программист Python",
-            'page': page
+        'catalogues': 48,
+        'town': 4,
+        'keyword': "программист {}".format(language)
+    }
+    response = requests.get(url, headers=headers, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        vacancies_found = len(data['objects'])
+        salaries = []
+        for vacancy in data['objects']:
+            if vacancy['payment_from'] and vacancy['payment_to']:
+                salaries.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
+        average_salary = int(mean(salaries)) if salaries else 0
+
+        vacancies_salary_stats[language] = {
+            "vacancies_found": vacancies_found,
+            "vacancies_processed": len(salaries),
+            "average_salary": average_salary
         }
-    headers = {
-            'X-Api-App-Id': 'v3.r.137884422.961cdbd81148582db9e6207fbebad278bac71cbe.ba2d6532707e51d059e79d37e3d4bae9b1f60467'
-        }
-    response_sj = requests.get(base_url, headers=headers, params=params)
-    response_sj.raise_for_status()
-    content_sj = response_sj.json()
-    vacancies_found = content_sj.get('found', 0)
-    print(vacancies_found)
+    else:
+        print("Ошибка при выполнении запроса:", response.status_code)
+
+print(vacancies_salary_stats)

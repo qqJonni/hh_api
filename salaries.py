@@ -98,7 +98,7 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
     }
 
 
-def main():
+def start():
     languages = ["Python", "Java", "Javascript", "Go", "PHP", "C++", "TypeScript", "C#", "Shell"]
     vacancies_salary_stats_hh = {}
     vacancies_salary_stats_sj = {}
@@ -132,4 +132,4 @@ def main():
 
 if __name__ == "__main__":
     load_dotenv(find_dotenv())
-    main()
+    start()
