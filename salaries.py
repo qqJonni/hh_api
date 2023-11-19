@@ -114,12 +114,10 @@ def start():
     for language in languages:
         try:
             hh_salaries = get_hh_vacancy_salaries(language)
-            if hh_salaries:
-                vacancies_salary_stats_hh[language] = hh_salaries
+            vacancies_salary_stats_hh[language] = hh_salaries
 
             sj_salaries = get_sj_vacancy_salaries(language, sj_secret_key)
-            if sj_salaries:
-                vacancies_salary_stats_sj[language] = sj_salaries
+            vacancies_salary_stats_sj[language] = sj_salaries
         except HTTPError as e:
             print(f"Exception while processing language {language}: {e}")
 
