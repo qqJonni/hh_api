@@ -30,9 +30,9 @@ def get_hh_vacancy_salaries(language):
             print(f"Ошибка при выполнении запроса (HH) для {language}: {e}")
             break
 
-        content = response.json()
-        vacancies_found = content['found']
-        vacancies = content['items']
+        json_response = response.json()
+        vacancies_found = json_response['found']
+        vacancies = json_response['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
             if salary and salary.get('from') and salary.get('to'):
@@ -42,7 +42,7 @@ def get_hh_vacancy_salaries(language):
             if salary and salary.get('to'):
                 salaries.append((salary['to']*0.8))
         page += 1
-        if not content['pages'] or page >= content['pages']:
+        if not json_response['pages'] or page >= json_response['pages']:
             break
 
     average_salary = int(mean(salaries)) if salaries else 0
@@ -108,13 +108,13 @@ def start():
 
     for language in languages:
         try:
-            hh_content = get_hh_vacancy_salaries(language)
-            if hh_content:
-                vacancies_salary_stats_hh[language] = hh_content
+            hh_salaries = get_hh_vacancy_salaries(language)
+            if hh_salaries:
+                vacancies_salary_stats_hh[language] = hh_salaries
 
-            sj_content = get_sj_vacancy_salaries(language, sj_secret_key)
-            if sj_content:
-                vacancies_salary_stats_sj[language] = sj_content
+            sj_salaries = get_sj_vacancy_salaries(language, sj_secret_key)
+            if sj_salaries:
+                vacancies_salary_stats_sj[language] = sj_salaries
         except HTTPError as e:
             print(f"Exception while processing language {language}: {e}")
 
