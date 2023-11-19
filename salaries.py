@@ -11,6 +11,19 @@ CATALOGUE_PROGRAMMING_SJ = 48
 TOWN_MOSCOW_SJ = 4
 
 
+def extract_salaries(salary_info, from_key, to_key):
+    extracted_salaries = []
+
+    if salary_info and salary_info.get(from_key) and salary_info.get(to_key):
+        extracted_salaries.append((salary_info[from_key] + salary_info[to_key]) / 2)
+    if salary_info and salary_info.get(from_key):
+        extracted_salaries.append(salary_info[from_key] * 1.2)
+    if salary_info and salary_info.get(to_key):
+        extracted_salaries.append(salary_info[to_key] * 0.8)
+
+    return extracted_salaries
+
+
 def get_hh_vacancy_salaries(language):
     base_url = "https://api.hh.ru/vacancies"
     vacancies_found = 0
@@ -25,7 +38,7 @@ def get_hh_vacancy_salaries(language):
         }
         try:
             response = requests.get(base_url, params=params)
-            response.raise_for_status()  # Raises an HTTPError for bad responses
+            response.raise_for_status()
         except requests.exceptions.HTTPError as e:
             print(f"Ошибка при выполнении запроса (HH) для {language}: {e}")
             break
@@ -35,12 +48,7 @@ def get_hh_vacancy_salaries(language):
         vacancies = json_response['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
-            if salary and salary.get('from') and salary.get('to'):
-                salaries.append((salary['from'] + salary['to']) / 2)
-            if salary and salary.get('from'):
-                salaries.append((salary['from']*1.2))
-            if salary and salary.get('to'):
-                salaries.append((salary['to']*0.8))
+            salaries.extend(extract_salaries(salary, 'from', 'to'))
         page += 1
         if not json_response['pages'] or page >= json_response['pages']:
             break
@@ -81,12 +89,9 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
         vacancies_found_sj = content_sj.get('total', 0)
 
         for vacancy in content_sj.get('objects', []):
-            if vacancy.get('payment_from') and vacancy.get('payment_to'):
-                salaries_sj.append((vacancy['payment_from'] + vacancy['payment_to']) / 2)
-            elif vacancy.get('payment_from'):
-                salaries_sj.append(vacancy['payment_from'] * 1.2)
-            elif vacancy.get('payment_to'):
-                salaries_sj.append(vacancy['payment_to'] * 0.8)
+            payment_from = vacancy.get('payment_from')
+            payment_to = vacancy.get('payment_to')
+            salaries_sj.extend(extract_salaries({'from': payment_from, 'to': payment_to}, 'from', 'to'))
 
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
