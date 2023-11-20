@@ -23,19 +23,17 @@ def generate_salary_table(stats, title):
 
 
 def extract_salaries(salary_info):
-    extracted_salaries = []
-
     from_salary = salary_info.get('from')
     to_salary = salary_info.get('to')
 
     if from_salary is not None and to_salary is not None:
-        extracted_salaries.append((from_salary + to_salary) / 2)
+        return (from_salary + to_salary) / 2
     if from_salary is not None:
-        extracted_salaries.append(from_salary * 1.2)
+        return from_salary * 1.2
     if to_salary is not None:
-        extracted_salaries.append(to_salary * 0.8)
+        return to_salary * 0.8
 
-    return extracted_salaries
+    return None
 
 
 def get_hh_vacancy_salaries(language):
