@@ -9,6 +9,7 @@ from terminaltables import AsciiTable
 AREA_MOSCOW_HH = 1
 CATALOGUE_PROGRAMMING_SJ = 48
 TOWN_MOSCOW_SJ = 4
+PERIOD = 1
 
 
 def generate_salary_table(stats, title):
@@ -85,7 +86,7 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
             'town': TOWN_MOSCOW_SJ,
             'keyword': f"программист {language}",
             'page': page,
-            'period': 1
+            'period': PERIOD
         }
         headers = {
             'X-Api-App-Id': sj_secret_key
