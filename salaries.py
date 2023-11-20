@@ -22,7 +22,7 @@ def generate_salary_table(stats, title):
     return table.table
 
 
-def extract_salaries(salary_info):
+def extract_salary(salary_info):
     from_salary = salary_info.get('from')
     to_salary = salary_info.get('to')
 
@@ -60,7 +60,7 @@ def get_hh_vacancy_salaries(language):
         vacancies = response_hh['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
-            salaries.extend(extract_salaries(salary))
+            salaries.extend(extract_salary(salary))
         page += 1
         if not response_hh['pages'] or page >= response_hh['pages']:
             break
@@ -103,7 +103,7 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
         for vacancy in content_sj.get('objects', []):
             payment_from = vacancy.get('payment_from')
             payment_to = vacancy.get('payment_to')
-            salaries_sj.extend(extract_salaries({'from': payment_from, 'to': payment_to}))
+            salaries_sj.extend(extract_salary({'from': payment_from, 'to': payment_to}))
 
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
