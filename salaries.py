@@ -54,14 +54,14 @@ def get_hh_vacancy_salaries(language):
             print(f"Ошибка при выполнении запроса (HH) для {language}: {e}")
             break
 
-        json_response = response.json()
-        vacancies_found = json_response['found']
-        vacancies = json_response['items']
+        response_hh = response.json()
+        vacancies_found = response_hh['found']
+        vacancies = response_hh['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
             salaries.extend(extract_salaries(salary, 'from', 'to'))
         page += 1
-        if not json_response['pages'] or page >= json_response['pages']:
+        if not response_hh['pages'] or page >= response_hh['pages']:
             break
 
     average_salary = int(mean(salaries)) if salaries else 0
