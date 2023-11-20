@@ -36,7 +36,7 @@ def extract_salary(salary_info):
     return None
 
 
-def get_hh_vacancy_salaries(language):
+def get_hh_vacancy_statistic(language):
     base_url = "https://api.hh.ru/vacancies"
     vacancies_found = 0
     salaries = []
@@ -73,7 +73,7 @@ def get_hh_vacancy_salaries(language):
     }
 
 
-def get_sj_vacancy_salaries(language, sj_secret_key):
+def get_sj_vacancy_statistic(language, sj_secret_key):
     base_url = "https://api.superjob.ru/2.0/vacancies/"
     vacancies_found_sj = 0
     salaries_sj = []
@@ -126,10 +126,10 @@ def start():
 
     for language in languages:
         try:
-            hh_salaries = get_hh_vacancy_salaries(language)
+            hh_salaries = get_hh_vacancy_statistic(language)
             vacancies_salary_stats_hh[language] = hh_salaries
 
-            sj_salaries = get_sj_vacancy_salaries(language, sj_secret_key)
+            sj_salaries = get_sj_vacancy_statistic(language, sj_secret_key)
             vacancies_salary_stats_sj[language] = sj_salaries
         except HTTPError as e:
             print(f"Exception while processing language {language}: {e}")
