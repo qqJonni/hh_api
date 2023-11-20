@@ -104,7 +104,13 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
         for vacancy in content_sj.get('objects', []):
             payment_from = vacancy.get('payment_from')
             payment_to = vacancy.get('payment_to')
-            salaries_sj.extend(extract_salary({'from': payment_from, 'to': payment_to}))
+
+            if payment_from and payment_to:
+                salaries_sj.extend(extract_salary({'from': payment_from, 'to': payment_to}))
+
+            elif payment_from or payment_to:
+                non_none_salary = payment_from if payment_from else payment_to
+                salaries_sj.extend(extract_salary({'from': non_none_salary, 'to': non_none_salary}))
 
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
@@ -135,7 +141,6 @@ def start():
         except HTTPError as e:
             print(f"Exception while processing language {language}: {e}")
 
-    # Output
     table_hh = generate_salary_table(vacancies_salary_stats_hh, "+HeadHunter Moscow------")
     print(table_hh)
 
