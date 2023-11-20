@@ -22,15 +22,18 @@ def generate_salary_table(stats, title):
     return table.table
 
 
-def extract_salaries(salary_info, from_key, to_key):
+def extract_salaries(salary_info):
     extracted_salaries = []
 
-    if salary_info and salary_info.get(from_key) and salary_info.get(to_key):
-        extracted_salaries.append((salary_info[from_key] + salary_info[to_key]) / 2)
-    if salary_info and salary_info.get(from_key):
-        extracted_salaries.append(salary_info[from_key] * 1.2)
-    if salary_info and salary_info.get(to_key):
-        extracted_salaries.append(salary_info[to_key] * 0.8)
+    from_salary = salary_info.get('from')
+    to_salary = salary_info.get('to')
+
+    if from_salary is not None and to_salary is not None:
+        extracted_salaries.append((from_salary + to_salary) / 2)
+    if from_salary is not None:
+        extracted_salaries.append(from_salary * 1.2)
+    if to_salary is not None:
+        extracted_salaries.append(to_salary * 0.8)
 
     return extracted_salaries
 
@@ -59,7 +62,7 @@ def get_hh_vacancy_salaries(language):
         vacancies = response_hh['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
-            salaries.extend(extract_salaries(salary, 'from', 'to'))
+            salaries.extend(extract_salaries(salary))
         page += 1
         if not response_hh['pages'] or page >= response_hh['pages']:
             break
@@ -102,7 +105,7 @@ def get_sj_vacancy_salaries(language, sj_secret_key):
         for vacancy in content_sj.get('objects', []):
             payment_from = vacancy.get('payment_from')
             payment_to = vacancy.get('payment_to')
-            salaries_sj.extend(extract_salaries({'from': payment_from, 'to': payment_to}, 'from', 'to'))
+            salaries_sj.extend(extract_salaries({'from': payment_from, 'to': payment_to}))
 
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
