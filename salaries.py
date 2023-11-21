@@ -27,11 +27,11 @@ def extract_salary(salary):
     from_salary = salary.get('from')
     to_salary = salary.get('to')
 
-    if from_salary is not None and to_salary is not None:
+    if from_salary and to_salary:
         return (from_salary + to_salary) / 2
-    if from_salary is not None:
+    if from_salary:
         return from_salary * 1.2
-    if to_salary is not None:
+    if to_salary:
         return to_salary * 0.8
 
     return None
