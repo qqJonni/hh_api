@@ -2,7 +2,6 @@ import requests
 import os
 from dotenv import load_dotenv, find_dotenv
 from statistics import mean
-
 from requests import HTTPError
 from terminaltables import AsciiTable
 
@@ -27,11 +26,11 @@ def extract_salary(salary):
     from_salary = salary.get('from')
     to_salary = salary.get('to')
 
-    if from_salary and to_salary:
+    if from_salary is not None and to_salary is not None:
         return (from_salary + to_salary) / 2
-    if from_salary:
+    if from_salary is not None:
         return from_salary * 1.2
-    if to_salary:
+    if to_salary is not None:
         return to_salary * 0.8
 
     return None
@@ -61,7 +60,9 @@ def get_hh_vacancy_statistic(language):
         vacancies = response_hh['items']
         for vacancy in vacancies:
             salary = vacancy.get('salary')
-            salaries.extend(extract_salary(salary))
+            extracted_salary = extract_salary(salary)
+            if extracted_salary is not None:
+                salaries.extend(extracted_salary)
         page += 1
         if not response_hh['pages'] or page >= response_hh['pages']:
             break
@@ -105,12 +106,16 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
             payment_from = vacancy.get('payment_from')
             payment_to = vacancy.get('payment_to')
 
-            if payment_from and payment_to:
-                salaries_sj.extend(extract_salary({'from': payment_from, 'to': payment_to}))
+            if payment_from is not None and payment_to is not None:
+                extracted_salary = extract_salary({'from': payment_from, 'to': payment_to})
+                if extracted_salary is not None:
+                    salaries_sj.extend(extracted_salary)
 
-            elif payment_from or payment_to:
-                non_none_salary = payment_from if payment_from else payment_to
-                salaries_sj.extend(extract_salary({'from': non_none_salary, 'to': non_none_salary}))
+            elif payment_from is not None or payment_to is not None:
+                non_none_salary = payment_from if payment_from is not None else payment_to
+                extracted_salary = extract_salary({'from': non_none_salary, 'to': non_none_salary})
+                if extracted_salary is not None:
+                    salaries_sj.extend(extracted_salary)
 
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
