@@ -23,9 +23,9 @@ def generate_salary_table(stats, title):
     return table.table
 
 
-def extract_salary(salary_info):
-    from_salary = salary_info.get('from')
-    to_salary = salary_info.get('to')
+def extract_salary(salary):
+    from_salary = salary.get('from')
+    to_salary = salary.get('to')
 
     if from_salary is not None and to_salary is not None:
         return (from_salary + to_salary) / 2
