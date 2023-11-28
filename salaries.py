@@ -113,9 +113,6 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
             if extracted_salary:
                 salaries_sj.append(extracted_salary)
 
-            if extracted_salary:
-                salaries_sj.append(extracted_salary)
-
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
             break
