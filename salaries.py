@@ -58,15 +58,17 @@ def get_hh_vacancy_statistic(language):
         response_hh = response.json()
         vacancies_found = response_hh['found']
         vacancies = response_hh['items']
+
         for vacancy in vacancies:
             salary = vacancy.get('salary')
-            extracted_salary = extract_salary(salary)
             if salary:
+                extracted_salary = extract_salary(salary)
                 if extracted_salary:
                     salaries.append(extracted_salary)
-            page += 1
-            if not response_hh['pages'] or page >= response_hh['pages']:
-                break
+
+        page += 1
+        if not response_hh['pages'] or page >= response_hh['pages']:
+            break
 
     average_salary = int(mean(salaries)) if salaries else 0
     return {
