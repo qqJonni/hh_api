@@ -108,12 +108,12 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
 
             extracted_salary = extract_salary({'from': payment_from, 'to': payment_to})
             if extracted_salary:
-                salaries_sj.extend(extracted_salary)
+                salaries_sj.append(extracted_salary)
 
             non_none_salary = payment_from if payment_from else payment_to
             extracted_salary = extract_salary({'from': non_none_salary, 'to': non_none_salary})
             if extracted_salary:
-                salaries_sj.extend(extracted_salary)
+                salaries_sj.append(extracted_salary)
 
         page += 1
         if not content_sj.get('more') or not content_sj.get('objects'):
