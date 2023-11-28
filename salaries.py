@@ -61,11 +61,14 @@ def get_hh_vacancy_statistic(language):
         for vacancy in vacancies:
             salary = vacancy.get('salary')
             extracted_salary = extract_salary(salary)
-            if extracted_salary:
-                salaries.extend(extracted_salary)
-        page += 1
-        if not response_hh['pages'] or page >= response_hh['pages']:
-            break
+            if salary:
+                if extracted_salary:
+                    salaries.append(extracted_salary)
+            page += 1
+            if not response_hh['pages'] or page >= response_hh['pages']:
+                break
+            else:
+                break
 
     average_salary = int(mean(salaries)) if salaries else 0
     return {
