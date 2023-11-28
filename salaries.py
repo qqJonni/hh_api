@@ -67,8 +67,6 @@ def get_hh_vacancy_statistic(language):
             page += 1
             if not response_hh['pages'] or page >= response_hh['pages']:
                 break
-            else:
-                break
 
     average_salary = int(mean(salaries)) if salaries else 0
     return {
