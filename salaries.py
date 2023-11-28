@@ -113,8 +113,6 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
             if extracted_salary:
                 salaries_sj.append(extracted_salary)
 
-            non_none_salary = payment_from if payment_from else payment_to
-            extracted_salary = extract_salary({'from': non_none_salary, 'to': non_none_salary})
             if extracted_salary:
                 salaries_sj.append(extracted_salary)
 
