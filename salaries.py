@@ -22,10 +22,7 @@ def generate_salary_table(stats, title):
     return table.table
 
 
-def extract_salary(salary):
-    from_salary = salary.get('from')
-    to_salary = salary.get('to')
-
+def extract_salary(from_salary, to_salary):
     if from_salary and to_salary:
         return (from_salary + to_salary) / 2
     if from_salary:
@@ -62,7 +59,7 @@ def get_hh_vacancy_statistic(language):
         for vacancy in vacancies:
             salary = vacancy.get('salary')
             if salary:
-                extracted_salary = extract_salary(salary)
+                extracted_salary = extract_salary(salary.get('from'), salary.get('to'))
                 if extracted_salary:
                     salaries.append(extracted_salary)
 
@@ -109,7 +106,7 @@ def get_sj_vacancy_statistic(language, sj_secret_key):
             payment_from = vacancy.get('payment_from')
             payment_to = vacancy.get('payment_to')
 
-            extracted_salary = extract_salary({'from': payment_from, 'to': payment_to})
+            extracted_salary = extract_salary(payment_from, payment_to)
             if extracted_salary:
                 salaries_sj.append(extracted_salary)
 
